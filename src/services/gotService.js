@@ -47,34 +47,46 @@ export default class GotService {
     return item.url.match(idRegExp)[1];
   }
 
+  _ifEmptyProp(prop) {
+    if (!prop) {
+      return "not found :(";
+    } else if (Array.isArray(prop) && prop[0] === "") {
+      return "not found :(";
+    } else {
+      return prop;
+    }
+  }
+
   _transformCharacter = (char) => {
     return {
-      id: this._extractId(char),
-      name: char.name,
-      gender: char.gender,
-      born: char.born,
-      died: char.died,
-      culture: char.culture,
+      id: this._ifEmptyProp(this._extractId(char)),
+      name: this._ifEmptyProp(char.name),
+      gender: this._ifEmptyProp(char.gender),
+      born: this._ifEmptyProp(char.born),
+      died: this._ifEmptyProp(char.died),
+      culture: this._ifEmptyProp(char.culture),
     };
   };
 
   _transformHouse = (house) => {
     return {
-      name: house.name,
-      region: house.region,
-      words: house.words,
-      titles: house.titles,
-      overlord: house.overlord,
-      ancestralWeapons: house.ancestralWeapons,
+      id: this._ifEmptyProp(this._extractId(house)),
+      name: this._ifEmptyProp(house.name),
+      region: this._ifEmptyProp(house.region),
+      words: this._ifEmptyProp(house.words),
+      titles: this._ifEmptyProp(house.titles),
+      overlord: this._ifEmptyProp(house.overlord),
+      ancestralWeapons: this._ifEmptyProp(house.ancestralWeapons),
     };
   };
 
   _transformBook = (book) => {
     return {
-      name: book.name,
-      numberOfPages: book.numberOfPages,
-      publisher: book.publisher,
-      released: book.released,
+      id: this._ifEmptyProp(this._extractId(book)),
+      name: this._ifEmptyProp(book.name),
+      numberOfPages: this._ifEmptyProp(book.numberOfPages),
+      publisher: this._ifEmptyProp(book.publisher),
+      released: this._ifEmptyProp(book.released),
     };
   };
 }

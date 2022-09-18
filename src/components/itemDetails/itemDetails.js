@@ -2,11 +2,11 @@ import React, { Component } from "react";
 import GotService from "../../services/gotService";
 import "./itemDetails.css";
 
-const Field = ({ char, field, label }) => {
+const Field = ({ item, field, label }) => {
   return (
     <li className="list-group-item d-flex justify-content-between">
       <span className="term">{label}</span>
-      <span>{char[field]}</span>
+      <span>{item[field]}</span>
     </li>
   );
 };
@@ -17,39 +17,42 @@ export default class ItemDetails extends Component {
   gotService = new GotService();
 
   state = {
-    char: null,
+    item: null,
   };
 
   componentDidMount() {
-    this.updateChar();
+    this.updateItem();
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.charId !== prevProps.charId) {
-      this.updateChar();
+    if (this.props.itemId !== prevProps.itemId) {
+      this.updateItem();
     }
   }
 
-  updateChar() {
-    const { charId } = this.props;
-    if (!charId) {
+  updateItem() {
+    const { itemId } = this.props;
+    //console.log(itemId);
+    if (!itemId) {
       return;
     }
 
-    this.gotService.getCharacter(charId).then((char) => {
-      this.setState({ char });
+    const { getItem } = this.props;
+
+    getItem(itemId).then((item) => {
+      this.setState({ item });
     });
     //this.foo.bar = 0;
   }
 
   render() {
-    if (!this.state.char) {
+    if (!this.state.item) {
       return <span className="select-error">Please select a character</span>;
     }
 
-    const { char } = this.state;
+    const { item } = this.state;
 
-    let { name } = char;
+    let { name } = item;
 
     name = name || "not found";
 
@@ -58,7 +61,7 @@ export default class ItemDetails extends Component {
         <h4>{name}</h4>
         <ul className="list-group list-group-flush">
           {React.Children.map(this.props.children, (child) => {
-            return React.cloneElement(child, { char });
+            return React.cloneElement(child, { item });
           })}
         </ul>
       </div>
