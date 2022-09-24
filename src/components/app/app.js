@@ -9,8 +9,18 @@ import CharacterPage from "../Pages/characterPage/characterPage";
 import GotService from "../../services/gotService";
 import BooksPage from "../Pages/booksPage/booksPage";
 import HousesPage from "../Pages/housesPage/housesPage";
+import BooksItem from "../Pages/booksItem/booksItem";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import "./app.css";
+
+function Page() {
+  const params = useParams();
+  const pageId = params.id;
+  console.log(pageId);
+  return <BooksItem bookId={pageId}></BooksItem>;
+}
 
 export default class App extends Component {
   gotService = new GotService();
@@ -48,24 +58,42 @@ export default class App extends Component {
     }
 
     return (
-      <>
-        <Container>
-          <Header />
-        </Container>
-        <Container>
-          <Row>
-            <Col lg={{ size: 5, offset: 0 }}>
-              {toggleRandomChar}
-              <button className="toggleButton" onClick={this.toggleButton}>
-                Toggle random character
-              </button>
-            </Col>
-          </Row>
-          <CharacterPage></CharacterPage>
-          <BooksPage></BooksPage>
-          <HousesPage></HousesPage>
-        </Container>
-      </>
+      <Router>
+        <div className="app">
+          <Container>
+            <Header />
+          </Container>
+          <Container>
+            <Row>
+              <Col lg={{ size: 5, offset: 0 }}>
+                {toggleRandomChar}
+                <button className="toggleButton" onClick={this.toggleButton}>
+                  Toggle random character
+                </button>
+              </Col>
+            </Row>
+
+            <Routes>
+              <Route
+                path="/"
+                exact
+                element={<h1>Welcome to GOT DB</h1>}
+              ></Route>
+              <Route
+                path="/characters"
+                element={<CharacterPage></CharacterPage>}
+              ></Route>
+              <Route path="/houses" element={<HousesPage></HousesPage>}></Route>
+              <Route
+                path="/books"
+                exact
+                element={<BooksPage></BooksPage>}
+              ></Route>
+              <Route path="/books/:id" element={<Page></Page>}></Route>
+            </Routes>
+          </Container>
+        </div>
+      </Router>
     );
   }
 }

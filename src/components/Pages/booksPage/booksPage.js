@@ -1,22 +1,23 @@
 import React, { Component } from "react";
 import ItemList from "../../itemList";
-import ItemDetails, { Field } from "../../itemDetails";
 import ErrorMessage from "../../errorMessage";
 import GotService from "../../../services/gotService";
-import RowBlock from "../../rowBlock";
+import { useNavigate } from "react-router-dom";
 
-export default class BooksPage extends Component {
+function withRouter(Component) {
+  function ComponentWithRouterProp(props) {
+    const navigate = useNavigate();
+    return <Component {...props} router={{ navigate }} />;
+  }
+
+  return ComponentWithRouterProp;
+}
+
+class BooksPage extends Component {
   gotService = new GotService();
 
   state = {
-    selectedBook: 1,
     error: false,
-  };
-
-  onItemSelected = (id) => {
-    this.setState({
-      selectedBook: id,
-    });
   };
 
   componentDidCatch() {
@@ -31,26 +32,16 @@ export default class BooksPage extends Component {
       return <ErrorMessage></ErrorMessage>;
     }
 
-    const itemList = (
+    return (
       <ItemList
-        onItemSelected={this.onItemSelected}
+        onItemSelected={(itemId) => {
+          this.props.router.navigate(`/books/${itemId}`, { replace: true });
+        }}
         getData={this.gotService.getAllBooks}
         renderItem={({ name, numberOfPages }) => `${name} (${numberOfPages})`}
       />
     );
-
-    const charDetails = (
-      <ItemDetails
-        itemId={this.state.selectedBook}
-        getItem={this.gotService.getBook}
-      >
-        <Field field="name" label="BookName"></Field>
-        <Field field="numberOfPages" label="NumberOfPages"></Field>
-        <Field field="publisher" label="Publisher"></Field>
-        <Field field="released" label="Released"></Field>
-      </ItemDetails>
-    );
-
-    return <RowBlock left={itemList} right={charDetails}></RowBlock>;
   }
 }
+
+export default withRouter(BooksPage);
