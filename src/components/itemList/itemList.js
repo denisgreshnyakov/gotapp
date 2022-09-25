@@ -2,9 +2,12 @@ import React, { Component } from "react";
 import "./itemList.css";
 import { Spinner } from "reactstrap";
 import PropTypes from "prop-types";
-import GotService from "../../services/gotService";
 
-class ItemList extends Component {
+export default class ItemList extends Component {
+  state = {
+    itemList: null,
+  };
+
   static defaultProps = {
     onItemSelected: () => {
       console.log("error");
@@ -14,6 +17,16 @@ class ItemList extends Component {
   static propTypes = {
     onItemSelected: PropTypes.func,
   };
+
+  //получаем список персонажей
+  componentDidMount() {
+    const { getData } = this.props;
+    getData().then((itemList) => {
+      this.setState({
+        itemList,
+      });
+    });
+  }
 
   renderItems(arr) {
     return arr.map((item) => {
@@ -33,37 +46,14 @@ class ItemList extends Component {
   }
 
   render() {
-    const { data } = this.props;
-    const items = this.renderItems(data);
+    const { itemList } = this.state;
+
+    if (!itemList) {
+      return <Spinner></Spinner>;
+    }
+
+    const items = this.renderItems(itemList);
 
     return <ul className="item-list list-group">{items}</ul>;
   }
 }
-
-const withData = (View, getData) => {
-  return class extends Component {
-    //получаем список персонажей
-    componentDidMount() {
-      getData().then((data) => {
-        this.setState({
-          data,
-        });
-      });
-    }
-
-    state = {
-      data: null,
-    };
-
-    render() {
-      const { data } = this.state;
-
-      if (!data) {
-        return <Spinner></Spinner>;
-      }
-      return <View {...this.props} data={data}></View>;
-    }
-  };
-};
-const { getAllCharacters } = new GotService();
-export default withData(ItemList, getAllCharacters);
