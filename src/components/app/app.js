@@ -18,7 +18,7 @@ import "./app.css";
 function Page() {
   const params = useParams();
   const pageId = params.id;
-  console.log(pageId);
+  //console.log(pageId);
   return <BooksItem bookId={pageId}></BooksItem>;
 }
 
@@ -77,7 +77,7 @@ export default class App extends Component {
               <Route
                 path="/"
                 exact
-                element={<h1>Welcome to GOT DB</h1>}
+                element={<h1 class="welcome">Welcome to GOT DB</h1>}
               ></Route>
               <Route
                 path="/characters"
